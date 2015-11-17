@@ -76,7 +76,7 @@ def randomise_order(x_data, y_data):
     maintained.'''
     data = zip(x_data, y_data)
     random.shuffle(data)
-    return zip(*data)
+    return zip(*data)  # pylint: disable=star-args
 
 
 def _enumerate(lst):
