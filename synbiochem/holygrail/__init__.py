@@ -11,6 +11,8 @@ import itertools
 import random
 import sys
 
+import climate
+
 import synbiochem.ann
 from synbiochem.utils import structure_utils as struct_utils
 
@@ -126,6 +128,8 @@ def _get_input_data(all_sequences):
 
 def main(argv):
     '''main method.'''
+    climate.enable_default_logging()
+
     classif_data = get_classif_data(int(argv[1]), argv[2:])
 
     x_data = _get_input_data([i for v in classif_data.values() for i in v])

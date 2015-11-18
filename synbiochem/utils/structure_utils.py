@@ -8,25 +8,28 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 @author:  neilswainston
 '''
 from matplotlib.colors import LinearSegmentedColormap
+import numpy
 import pylab
 import random
 import re
+import scipy.spatial
 import tempfile
 import urllib
 
 from Bio import SeqUtils
 from Bio.PDB.PDBParser import PDBParser
 from Bio.PDB.Polypeptide import PPBuilder
-import numpy
-import scipy.spatial
 
 
 def get_pdb_ids(max_ids=None):
     '''Returns all PDB ids.'''
-    url = 'ftp://ftp.wwpdb.org/pub/pdb/derived_data/index/entries.idx'
+    url = 'http://www.uniprot.org/uniprot/?query=database:pdb&format=tab' \
+        + '&columns=id,database(PDB)'
     with tempfile.NamedTemporaryFile() as temp:
         urllib.urlretrieve(url, temp.name)
-        ids = [line.split()[0] for line in open(temp.name)][2:]
+        ids = [x for line in open(temp.name)
+               for x in line.split()[1].split(';')
+               if len(x) > 0 and x != 'Cross-reference']
 
         return ids if max_ids is None \
             else random.sample(ids, min(len(ids), max_ids))
@@ -142,6 +145,9 @@ def sample_seqs(sample_size, struct_patt):
 
     while len(seqs) < sample_size:
         pdb_ids = get_pdb_ids(sample_size)
+
+        print pdb_ids
+
         seq_struct = get_seq_struct(pdb_ids)
         assert all([len(v[0]) == len(v[1]) for v in seq_struct.values()])
         matches = set([v[0][slice(*(m.span()))]

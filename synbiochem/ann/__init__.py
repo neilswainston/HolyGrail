@@ -12,10 +12,10 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 from collections import defaultdict
 from functools import partial
 from itertools import count
+import numpy
 import random
 
 import climate
-import numpy
 from sklearn.datasets.samples_generator import make_blobs
 from sklearn.metrics import classification_report, confusion_matrix
 import theanets
@@ -76,7 +76,7 @@ def randomise_order(x_data, y_data):
     maintained.'''
     data = zip(x_data, y_data)
     random.shuffle(data)
-    return zip(*data)  # pylint: disable=star-args
+    return zip(*data)
 
 
 def _enumerate(lst):
