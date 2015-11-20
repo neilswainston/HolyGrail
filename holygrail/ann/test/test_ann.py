@@ -13,7 +13,7 @@ import unittest
 
 from sklearn.datasets.samples_generator import make_blobs
 
-import synbiochem.ann
+import holygrail.ann
 
 
 class TestClassifier(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestClassifier(unittest.TestCase):
         # Split data into training and classifying:
         ind = int(0.8 * len(x_data))
 
-        classifier = synbiochem.ann.Classifier()
+        classifier = holygrail.ann.Classifier()
         classifier.train(x_data[:ind], y_data[:ind])
 
         y_test = y_data[ind:]
