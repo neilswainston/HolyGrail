@@ -10,8 +10,8 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 import itertools
 import random
 
-import holygrail
 from synbiochem.utils import structure_utils as struct_utils
+import holygrail
 
 
 def get_regression_data(max_ids, num_samples, nmer_len):

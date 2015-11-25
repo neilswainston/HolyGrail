@@ -13,7 +13,7 @@ import sys
 
 import climate
 
-import holygrail.ann
+import synbiochem.ann
 
 
 # KD Hydrophobicity, EIIP, Helix, Sheet, Turn
