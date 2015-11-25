@@ -11,8 +11,8 @@ import sys
 
 import climate
 
-import holygrail.ann
 from synbiochem.utils import structure_utils as struct_utils
+import holygrail.ann
 
 
 def get_classif_data(sample_size, struct_patterns):
@@ -40,7 +40,7 @@ def main(argv):
     classifier = holygrail.ann.Classifier()
     classifier.train(x_data[:ind], y_data[:ind], hidden_layers=[int(argv[2])])
 
-    for output in classifier.classify(x_data[ind:], y_data[ind:]):
+    for output in classifier.classify(x_data[ind:], y_data[ind:])[1:]:
         print output
 
 if __name__ == '__main__':

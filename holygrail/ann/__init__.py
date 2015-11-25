@@ -15,9 +15,9 @@ from itertools import count
 import numpy
 import random
 
-import climate
 from sklearn.datasets.samples_generator import make_blobs
 from sklearn.metrics import classification_report, confusion_matrix
+import climate
 import theanets
 
 
@@ -44,32 +44,25 @@ class Classifier(object):
 
         layers = [len(x_data[0])] + hidden_layers + [len(set(y_data))]
         self.__exp = theanets.Experiment(theanets.Classifier, layers=layers)
+        x_data = numpy.array(x_data, dtype=numpy.float32)
+        y_enum = _enumerate(y_data)
+        y_data = numpy.array([y[1] for y in y_enum], dtype=numpy.int32)
+        self.__y_map = dict(set(y_enum))
 
-        try:
-            x_data = numpy.array(x_data, dtype=numpy.float32)
-            y_enum = _enumerate(y_data)
-            y_data = numpy.array([y[1] for y in y_enum], dtype=numpy.int32)
-            self.__y_map = dict(set(y_enum))
-
-            # Split data into training and validation:
-            ind = int(split * len(x_data))
-            self.__exp.train((x_data[:ind], y_data[:ind]),
-                             (x_data[ind:], y_data[ind:]),
-                             optimize=self.__optimize,
-                             learning_rate=self.__learning_rate,
-                             momentum=self.__momentum)
-        except ValueError, err:
-            print err
+        # Split data into training and validation:
+        ind = int(split * len(x_data))
+        self.__exp.train((x_data[:ind], y_data[:ind]),
+                         (x_data[ind:], y_data[ind:]),
+                         optimize=self.__optimize,
+                         learning_rate=self.__learning_rate,
+                         momentum=self.__momentum)
 
     def classify(self, x_test, y_test):
         '''Classifies and analyses test data.'''
-        try:
-            y_test = numpy.array([self.__y_map[y]
-                                  for y in y_test], dtype=numpy.int32)
+        y_test = numpy.array([self.__y_map[y]
+                              for y in y_test], dtype=numpy.int32)
 
-            y_pred = self.__exp.network.classify(x_test)
-        except TypeError, err:
-            print err
+        y_pred = self.__exp.network.classify(x_test)
 
         inv_y_map = {v: k for k, v in self.__y_map.items()}
 

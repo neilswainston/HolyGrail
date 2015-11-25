@@ -17,7 +17,7 @@ import holygrail.ann
 
 
 # KD Hydrophobicity, EIIP, Helix, Sheet, Turn
-AMINO_ACID_PROPS = {
+AA_PROPS = {
     'A': [0.66, 0.336, 0.870, 0.399, 0.326],
     'R': [0.1, 0.707, 0.597, 0.518, 0.569],
     'N': [0.189, 0.123, 0.391, 0.276, 0.9],
@@ -43,8 +43,8 @@ AMINO_ACID_PROPS = {
 
 def get_input_data(all_sequences):
     '''Returns input data for machine-learning problems.'''
-    return [list(itertools.chain.from_iterable([AMINO_ACID_PROPS[am_acid]
-                                                if am_acid in AMINO_ACID_PROPS
-                                                else [0.0, 0.0, 0.0]
+    return [list(itertools.chain.from_iterable([AA_PROPS[am_acid]
+                                                if am_acid in AA_PROPS
+                                                else [0.5] * len(AA_PROPS['A'])
                                                 for am_acid in sequences]))
             for sequences in all_sequences]
