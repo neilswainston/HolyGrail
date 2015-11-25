@@ -26,7 +26,7 @@ def main(argv):
     '''main method.'''
     climate.enable_default_logging()
 
-    classif_data = get_classif_data(int(argv[1]), argv[2:])
+    classif_data = get_classif_data(int(argv[1]), argv[3:])
 
     x_data = holygrail.get_input_data([i for v in classif_data.values()
                                        for i in v])
@@ -38,7 +38,7 @@ def main(argv):
     ind = int(0.8 * len(x_data))
 
     classifier = holygrail.ann.Classifier()
-    classifier.train(x_data[:ind], y_data[:ind], hidden_layers=[10])
+    classifier.train(x_data[:ind], y_data[:ind], hidden_layers=[int(argv[2])])
 
     for output in classifier.classify(x_data[ind:], y_data[ind:]):
         print output
