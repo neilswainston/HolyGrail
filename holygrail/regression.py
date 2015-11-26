@@ -10,8 +10,8 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 import itertools
 import random
 
-from synbiochem.utils import structure_utils as struct_utils
 import holygrail
+from synbiochem.utils import structure_utils as struct_utils
 
 
 def get_regression_data(max_ids, num_samples, nmer_len):
@@ -32,7 +32,7 @@ def _sample_regression_data(pdb_id, num_samples, nmer_len):
 
     results = []
 
-    num_aa_props = len(holygrail.AMINO_ACID_PROPS['A'])
+    num_aa_props = len(holygrail.AA_PROPS['A'])
 
     for _ in range(num_samples):
         chn = int(random.random() * len(all_seqs))
