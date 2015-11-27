@@ -7,7 +7,9 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 @author:  neilswainston
 '''
+# pylint: disable=no-member
 import itertools
+import numpy
 import random
 import sys
 
@@ -43,8 +45,11 @@ AA_PROPS = {
 
 def get_input_data(all_sequences):
     '''Returns input data for machine-learning problems.'''
+    mean_value = numpy.mean([x for sublist in AA_PROPS.values()
+                             for x in sublist])
     return [list(itertools.chain.from_iterable([AA_PROPS[am_acid]
                                                 if am_acid in AA_PROPS
-                                                else [0.5] * len(AA_PROPS['A'])
+                                                else [mean_value] *
+                                                len(AA_PROPS['A'])
                                                 for am_acid in sequences]))
             for sequences in all_sequences]
