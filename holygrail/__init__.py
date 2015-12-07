@@ -18,6 +18,7 @@ import sys
 import climate
 
 import synbiochem.ann
+import synbiochem.utils.structure_utils as struct_utils
 
 
 # KD Hydrophobicity, EIIP, Helix, Sheet, Turn
@@ -56,6 +57,13 @@ def get_input_data(all_sequences, scale=(0.1, 0.9)):
                                                 len(scaled['A'])
                                                 for am_acid in sequences]))
             for sequences in all_sequences]
+
+
+def get_pdb_data(sample_size, struct_patterns):
+    '''Gets random PDB data for analyses.'''
+    return {struct_pattern: struct_utils.sample_seqs(sample_size,
+                                                     struct_pattern)
+            for struct_pattern in struct_patterns}
 
 
 def __scale(scale):

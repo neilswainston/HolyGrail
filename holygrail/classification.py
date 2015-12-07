@@ -13,7 +13,6 @@ import climate
 
 import holygrail
 import synbiochem.ann
-from synbiochem.utils import structure_utils as struct_utils
 
 
 def classify(sample_size, struct_patterns, split, hidden_layers):
@@ -22,14 +21,14 @@ def classify(sample_size, struct_patterns, split, hidden_layers):
     climate.enable_default_logging()
 
     # Get random peptides that match structure patterns from PDB:
-    classif_data = get_classif_data(sample_size, struct_patterns)
+    pdb_data = holygrail.get_pdb_data(sample_size, struct_patterns)
 
     # Convert peptides to inputs, based on amino acid properties:
-    x_data = holygrail.get_input_data([i for v in classif_data.values()
+    x_data = holygrail.get_input_data([i[0] for v in pdb_data.values()
                                        for i in v])
 
     # Convert classess to outputs (these are based on structure patterns):
-    y_data = [i for k, v in classif_data.iteritems() for i in [k] * len(v)]
+    y_data = [i for k, v in pdb_data.iteritems() for i in [k] * len(v)]
 
     # Randomise input and output data order:
     x_data, y_data = synbiochem.ann.randomise_order(x_data, y_data)
@@ -42,13 +41,6 @@ def classify(sample_size, struct_patterns, split, hidden_layers):
     classifier.train(x_data[:ind], y_data[:ind], hidden_layers=[hidden_layers])
 
     return classifier.classify(x_data[ind:], y_data[ind:])[1:]
-
-
-def get_classif_data(sample_size, struct_patterns):
-    '''Gets random data for classification analyses.'''
-    return {struct_pattern: struct_utils.sample_seqs(sample_size,
-                                                     struct_pattern)
-            for struct_pattern in struct_patterns}
 
 
 def main(argv):
