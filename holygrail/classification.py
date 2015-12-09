@@ -15,7 +15,8 @@ import holygrail
 import synbiochem.ann
 
 
-def classify(sample_size, struct_patterns, split, hidden_layers):
+def classify(sample_size, struct_patterns, split, hidden_layers,
+             scale=(0.1, 0.9)):
     '''Classification of peptides, specified by structure patterns as
     regexps.'''
     climate.enable_default_logging()
@@ -25,7 +26,8 @@ def classify(sample_size, struct_patterns, split, hidden_layers):
 
     # Convert peptides to inputs, based on amino acid properties:
     x_data = holygrail.get_input_data([i[0] for v in pdb_data.values()
-                                       for i in v])
+                                       for i in v],
+                                      scale=scale)
 
     # Convert classess to outputs (these are based on structure patterns):
     y_data = [i for k, v in pdb_data.iteritems() for i in [k] * len(v)]
@@ -38,7 +40,7 @@ def classify(sample_size, struct_patterns, split, hidden_layers):
 
     # Perform classification:
     classifier = synbiochem.ann.Classifier()
-    classifier.train(x_data[:ind], y_data[:ind], hidden_layers=[hidden_layers])
+    classifier.train(x_data[:ind], y_data[:ind], hidden_layers=hidden_layers)
 
     return classifier.classify(x_data[ind:], y_data[ind:])[1:]
 
@@ -48,7 +50,7 @@ def main(argv):
     classification = classify(int(argv[1]),
                               argv[4:],
                               float(argv[2]),
-                              int(argv[3]))
+                              [int(argv[3])])
 
     for output in classification:
         print output
