@@ -15,8 +15,10 @@ import holygrail
 import synbiochem.ann
 
 
-def classify(sample_size, struct_patterns, split, hidden_layers,
-             scale=(0.1, 0.9)):
+def classify(sample_size, struct_patterns, split, hidden_layers=None,
+             learning_rate=0.01, momentum=0.5, patience=5,
+             min_improvement=0.005, validate_every=1, batch_size=5,
+             hidden_dropout=0.0, input_dropout=0.0, scale=(0.1, 0.9)):
     '''Classification of peptides, specified by structure patterns as
     regexps.'''
     climate.enable_default_logging()
@@ -39,8 +41,13 @@ def classify(sample_size, struct_patterns, split, hidden_layers,
     ind = int(split * len(x_data))
 
     # Perform classification:
-    classifier = synbiochem.ann.Classifier()
-    classifier.train(x_data[:ind], y_data[:ind], hidden_layers=hidden_layers)
+    classifier = synbiochem.ann.Classifier(x_data[:ind], y_data[:ind])
+    classifier.train(hidden_layers=hidden_layers,  learning_rate=learning_rate,
+                     momentum=momentum, patience=patience,
+                     min_improvement=min_improvement,
+                     validate_every=validate_every, batch_size=batch_size,
+                     hidden_dropout=hidden_dropout,
+                     input_dropout=input_dropout)
 
     return classifier.classify(x_data[ind:], y_data[ind:])[1:]
 
