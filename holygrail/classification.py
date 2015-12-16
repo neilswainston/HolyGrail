@@ -9,7 +9,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 import sys
 
-import climate
+# import climate
 
 import holygrail
 import synbiochem.ann
@@ -19,7 +19,7 @@ class Classifier(object):
 
     def __init__(self, sample_size, struct_patterns, split, scale=(0.1, 0.9)):
         '''Constructor.'''
-        climate.enable_default_logging()
+        # climate.enable_default_logging()
 
         # Get random peptides that match structure patterns from PDB:
         pdb_data = holygrail.get_pdb_data(sample_size, struct_patterns)
@@ -58,7 +58,7 @@ class Classifier(object):
                          hidden_dropout=hidden_dropout,
                          input_dropout=input_dropout)
 
-        return classifier.classify(self.__x_data_test, self.__y_data_test)[1:]
+        return classifier.classify(self.__x_data_test, self.__y_data_test)
 
 
 def main(argv):
@@ -66,7 +66,7 @@ def main(argv):
     classifier = Classifier(int(argv[1]), argv[4:], float(argv[2]))
     classification = classifier.classify(hidden_layers=[int(argv[3])])
 
-    for output in classification:
+    for output in classification[1:]:
         print output
 
 
