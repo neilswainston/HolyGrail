@@ -17,10 +17,11 @@ class ClassifierGeneticAlgorithm(gen_alg.GeneticAlgorithm):
     '''Class to optimise parameters for Classifier using a GA.'''
 
     def __init__(self, pop_size, sample_size, struct_patterns, split, args,
-                 verbose):
+                 retain=0.2, random_select=0.05, mutate=0.01, verbose=False):
         '''Constructor.'''
         super(ClassifierGeneticAlgorithm, self).__init__(pop_size, args,
-                                                         verbose)
+                                                         retain, random_select,
+                                                         mutate, verbose)
 
         self.__classifier = classification.Classifier(sample_size,
                                                       struct_patterns,
@@ -29,7 +30,10 @@ class ClassifierGeneticAlgorithm(gen_alg.GeneticAlgorithm):
     def _fitness(self, individual):
         '''Determine the fitness of an individual.'''
         classification = self.__classifier.classify(**individual)
-        print str(classification[4]) + '\t' + str(individual)
+
+        if self._verbose:
+            print str(classification[4]) + '\t' + str(individual)
+
         return 1 - classification[4]
 
 
@@ -46,9 +50,13 @@ def main(argv):
             'input_dropout': [i * 0.1 for i in range(0, 10)]}
     classifier = ClassifierGeneticAlgorithm(pop_size=int(argv[1]),
                                             sample_size=int(argv[2]),
-                                            struct_patterns=argv[4:],
+                                            struct_patterns=argv[7:],
                                             split=float(argv[3]),
-                                            args=args, verbose=True)
+                                            args=args,
+                                            retain=float(argv[4]),
+                                            random_select=float(argv[5]),
+                                            mutate=float(argv[6]),
+                                            verbose=True)
 
     classifier.run()
 
