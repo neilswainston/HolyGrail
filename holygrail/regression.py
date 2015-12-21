@@ -9,11 +9,13 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 '''
 import itertools
 import sys
-import climate
 
-from synbiochem.utils import structure_utils as struct_utils
+import climate
+from sklearn.metrics import mean_squared_error
+
 import holygrail
 import synbiochem.ann
+from synbiochem.utils import structure_utils as struct_utils
 
 
 def regress(sample_size, struct_pattern, split, hidden_layers):
@@ -21,20 +23,33 @@ def regress(sample_size, struct_pattern, split, hidden_layers):
     pattern as regexps.'''
     climate.enable_default_logging()
 
-    # Get random peptides that match structure patterns from PDB:
-    pdb_data = holygrail.get_pdb_data(sample_size, [struct_pattern], True)
+    x_data = []
+    y_data = []
 
-    # Convert peptides to inputs, based on amino acid properties:
-    x_data = holygrail.get_input_data([i[0] for v in pdb_data.values()
-                                       for i in v])
+    while len(x_data) < sample_size:
+        # Get random peptides that match structure patterns from PDB:
+        pdb_data = holygrail.get_pdb_data(sample_size, [struct_pattern], True)
 
-    # Convert classess to outputs (these are based on structure patterns):
-    y_data = [_get_phi_psi_data(v[2][0], v[2][1], v[3])
-              for sublist in pdb_data.values()
-              for v in sublist]
+        # Convert peptides to inputs, based on amino acid properties:
+        curr_x_data = holygrail.get_input_data([i[0] for v in pdb_data.values()
+                                                for i in v])
+
+        # Get torsion angles as outputs:
+        curr_y_data = [_get_phi_psi_data(v[2][0], v[2][1], v[3])
+                       for sublist in pdb_data.values()
+                       for v in sublist]
+
+        x_data.extend([d for i, d in enumerate(curr_x_data)
+                       if len(curr_y_data[i]) / 2 == len(curr_y_data[i]) /
+                       len(holygrail.AA_PROPS['A'])])
+
+        y_data.extend([d for i, d in enumerate(curr_y_data)
+                       if len(curr_y_data[i]) / 2 == len(curr_y_data[i]) /
+                       len(holygrail.AA_PROPS['A'])])
 
     # Randomise input and output data order:
-    x_data, y_data = synbiochem.ann.randomise_order(x_data, y_data)
+    x_data, y_data = synbiochem.ann.randomise_order(x_data[:sample_size],
+                                                    y_data[:sample_size])
 
     # Split data into training and classifying:
     ind = int(split * len(x_data))
@@ -42,10 +57,14 @@ def regress(sample_size, struct_pattern, split, hidden_layers):
     # Perform regression:
     regressor = synbiochem.ann.Regressor()
     regressor.train(x_data[:ind], y_data[:ind], hidden_layers=[hidden_layers])
-
     y_pred = regressor.predict(x_data[ind:])
 
-    return y_data[ind:], y_pred
+    print len(y_data[ind:])
+    print len(y_pred)
+    print [len(d) for d in y_data[ind:]]
+    print [len(d) for d in y_pred]
+
+    return mean_squared_error(y_data[ind:], y_pred)
 
 
 def _get_proximity_data(pdb_id):
@@ -66,6 +85,7 @@ def _get_proximity_data(pdb_id):
 
 def _get_phi_psi_data(pdb_id, chain, subrange):
     '''Gets input/output for deep learning.'''
+    print pdb_id + ':' + chain
     all_phi_psi_data = struct_utils.get_phi_psi_data(pdb_id, chain)
 
     phi_psi_output = [list(itertools.chain.from_iterable(lst))
@@ -83,13 +103,10 @@ def _get_sub_square_matrix(idx, lngth, size):
 
 def main(argv):
     '''main method.'''
-    regression = regress(int(argv[1]),
-                         argv[4],
-                         float(argv[2]),
-                         int(argv[3]))
-
-    for output in regression:
-        print output
+    print regress(int(argv[1]),
+                  argv[4],
+                  float(argv[2]),
+                  int(argv[3]))
 
 
 if __name__ == '__main__':
