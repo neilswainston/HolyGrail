@@ -7,6 +7,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 @author:  neilswainston
 '''
+# pylint: disable=too-few-public-methods
 import sys
 
 import holygrail.classification as classification
@@ -29,12 +30,12 @@ class ClassifierGeneticAlgorithm(gen_alg.GeneticAlgorithm):
 
     def _fitness(self, individual):
         '''Determine the fitness of an individual.'''
-        classification = self.__classifier.classify(**individual)
+        cls = self.__classifier.classify(**individual)
 
         if self._verbose:
-            print str(classification[4]) + '\t' + str(individual)
+            print str(cls[4]) + '\t' + str(individual)
 
-        return 1 - classification[4]
+        return 1 - cls[4]
 
 
 def main(argv):

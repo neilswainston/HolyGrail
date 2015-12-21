@@ -7,6 +7,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 @author:  neilswainston
 '''
+# pylint: disable=too-few-public-methods
 import sys
 
 # import climate
@@ -16,6 +17,7 @@ import synbiochem.ann
 
 
 class Classifier(object):
+    '''Class to represent a Classifier of secondary structure.'''
 
     def __init__(self, sample_size, struct_patterns, split, scale=(0.1, 0.9)):
         '''Constructor.'''

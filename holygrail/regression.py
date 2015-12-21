@@ -51,20 +51,7 @@ def regress(sample_size, struct_pattern, split, hidden_layers):
     x_data, y_data = synbiochem.ann.randomise_order(x_data[:sample_size],
                                                     y_data[:sample_size])
 
-    # Split data into training and classifying:
-    ind = int(split * len(x_data))
-
-    # Perform regression:
-    regressor = synbiochem.ann.Regressor()
-    regressor.train(x_data[:ind], y_data[:ind], hidden_layers=[hidden_layers])
-    y_pred = regressor.predict(x_data[ind:])
-
-    print len(y_data[ind:])
-    print len(y_pred)
-    print [len(d) for d in y_data[ind:]]
-    print [len(d) for d in y_pred]
-
-    return mean_squared_error(y_data[ind:], y_pred)
+    return _run_regressor(split, x_data, y_data, hidden_layers)
 
 
 def _get_proximity_data(pdb_id):
@@ -85,7 +72,6 @@ def _get_proximity_data(pdb_id):
 
 def _get_phi_psi_data(pdb_id, chain, subrange):
     '''Gets input/output for deep learning.'''
-    print pdb_id + ':' + chain
     all_phi_psi_data = struct_utils.get_phi_psi_data(pdb_id, chain)
 
     phi_psi_output = [list(itertools.chain.from_iterable(lst))
@@ -99,6 +85,24 @@ def _get_sub_square_matrix(idx, lngth, size):
     size.'''
     return [((idx + r) * size) + idx + c for r in range(lngth)
             for c in range(lngth)]
+
+
+def _run_regressor(split, x_data, y_data, hidden_layers):
+    '''Runs the regressor job.'''
+    # Split data into training and classifying:
+    ind = int(split * len(x_data))
+
+    # Perform regression:
+    regressor = synbiochem.ann.Regressor(x_data[:ind], y_data[:ind])
+    regressor.train(hidden_layers=[hidden_layers])
+    y_pred = regressor.predict(x_data[ind:])
+
+    print len(y_data[ind:])
+    print len(y_pred)
+    print [len(d) for d in y_data[ind:]]
+    print [len(d) for d in y_pred]
+
+    return mean_squared_error(y_data[ind:], y_pred)
 
 
 def main(argv):
