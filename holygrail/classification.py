@@ -19,12 +19,14 @@ import synbiochem.ann
 class Classifier(object):
     '''Class to represent a Classifier of secondary structure.'''
 
-    def __init__(self, sample_size, struct_patterns, split, scale=(0.1, 0.9)):
+    def __init__(self, sample_size, struct_patterns, split, min_hamming=3,
+                 scale=(0.1, 0.9)):
         '''Constructor.'''
         # climate.enable_default_logging()
 
         # Get random peptides that match structure patterns from PDB:
-        pdb_data = holygrail.get_pdb_data(sample_size, struct_patterns)
+        pdb_data = holygrail.get_pdb_data(sample_size, struct_patterns,
+                                          min_hamming)
 
         # Convert peptides to inputs, based on amino acid properties:
         x_data = holygrail.get_input_data([i[0] for v in pdb_data.values()

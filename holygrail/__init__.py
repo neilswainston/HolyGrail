@@ -59,10 +59,11 @@ def get_input_data(all_sequences, scale=(0.1, 0.9)):
             for sequences in all_sequences]
 
 
-def get_pdb_data(sample_size, struct_patterns, local_only=False):
+def get_pdb_data(sample_size, struct_patterns, min_hamming=3, local_only=False):
     '''Gets random PDB data for analyses.'''
     return {struct_pattern: struct_utils.sample_seqs(sample_size,
                                                      struct_pattern,
+                                                     min_hamming,
                                                      local_only)
             for struct_pattern in struct_patterns}
 
