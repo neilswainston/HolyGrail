@@ -14,6 +14,7 @@ import sys
 
 import holygrail
 import synbiochem.ann
+import synbiochem.utils.structure_utils as struct_utils
 
 
 class Classifier(object):
@@ -25,8 +26,8 @@ class Classifier(object):
         # climate.enable_default_logging()
 
         # Get random peptides that match structure patterns from PDB:
-        pdb_data = holygrail.get_pdb_data(sample_size, struct_patterns,
-                                          min_hamming)
+        pdb_data, _ = struct_utils.sample_seqs(sample_size, struct_patterns,
+                                               min_hamming)
 
         # Convert peptides to inputs, based on amino acid properties:
         x_data = holygrail.get_input_data([i[0] for v in pdb_data.values()
