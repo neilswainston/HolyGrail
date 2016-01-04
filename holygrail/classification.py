@@ -18,17 +18,9 @@ import synbiochem.ann
 class Classifier(object):
     '''Class to represent a Classifier of secondary structure.'''
 
-    def __init__(self, sample_size, struct_patterns, split, min_hamming=3,
-                 scale=(0.1, 0.9)):
+    def __init__(self, pdb_data, split, scale=(0.1, 0.9)):
         '''Constructor.'''
         # climate.enable_default_logging()
-
-        # Get random peptides that match structure patterns from PDB:
-        pdb_data, hammings = holygrail.data.sample_seqs(sample_size,
-                                                        struct_patterns,
-                                                        min_hamming)
-
-        print hammings
 
         # Convert peptides to inputs, based on amino acid properties:
         x_data = holygrail.get_input_data([i[0] for v in pdb_data.values()
@@ -69,7 +61,13 @@ class Classifier(object):
 
 def main(argv):
     '''main method.'''
-    classifier = Classifier(int(argv[1]), argv[4:], float(argv[2]))
+    # Get random peptides that match structure patterns from PDB:
+    pdb_data, hammings = holygrail.data.sample_seqs(int(argv[1]),
+                                                    argv[4:])
+
+    print hammings
+
+    classifier = Classifier(pdb_data, float(argv[2]))
     classification = classifier.classify(hidden_layers=[int(argv[3])])
 
     for output in classification[1:]:
