@@ -10,13 +10,11 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 # pylint: disable=too-few-public-methods
 import sys
 
-# import climate
-
-import holygrail
+import holygrail.data
 import synbiochem.ann
-import synbiochem.utils.structure_utils as struct_utils
 
 
+# import climate
 class Classifier(object):
     '''Class to represent a Classifier of secondary structure.'''
 
@@ -26,8 +24,11 @@ class Classifier(object):
         # climate.enable_default_logging()
 
         # Get random peptides that match structure patterns from PDB:
-        pdb_data, _ = struct_utils.sample_seqs(sample_size, struct_patterns,
-                                               min_hamming)
+        pdb_data, hammings = holygrail.data.sample_seqs(sample_size,
+                                                        struct_patterns,
+                                                        min_hamming)
+
+        print hammings
 
         # Convert peptides to inputs, based on amino acid properties:
         x_data = holygrail.get_input_data([i[0] for v in pdb_data.values()

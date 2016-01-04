@@ -10,12 +10,12 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 import itertools
 import sys
 
-import climate
 from sklearn.metrics import mean_squared_error
+import climate
 
+from synbiochem.utils import structure_utils as struct_utils
 import holygrail
 import synbiochem.ann
-from synbiochem.utils import structure_utils as struct_utils
 
 
 def regress(sample_size, struct_pattern, split, hidden_layers):
@@ -28,7 +28,8 @@ def regress(sample_size, struct_pattern, split, hidden_layers):
 
     while len(x_data) < sample_size:
         # Get random peptides that match structure patterns from PDB:
-        pdb_data = holygrail.get_pdb_data(sample_size, [struct_pattern], True)
+        pdb_data, _ = holygrail.data.sample_seqs(sample_size, [struct_pattern],
+                                                 local_only=True)
 
         # Convert peptides to inputs, based on amino acid properties:
         curr_x_data = holygrail.get_input_data([i[0] for v in pdb_data.values()
