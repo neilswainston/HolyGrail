@@ -7,7 +7,6 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 @author:  neilswainston
 '''
-import matplotlib.pyplot
 import random
 import sys
 
@@ -82,9 +81,8 @@ def main(argv):
                                  argv[4:],
                                  min_hamming=int(argv[2]))
 
-    matplotlib.pyplot.bar(hammings.keys(), hammings.values())
     print 'Hamming distances: ' + str(hammings)
-    print 'Number of Hamming distances: ' + \
+    print 'Total: ' + \
         str(sum([v for v in hammings.values()]))
 
     with open(argv[3], 'w') as outfile:
