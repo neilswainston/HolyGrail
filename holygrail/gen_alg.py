@@ -29,7 +29,18 @@ class ClassifierGeneticAlgorithm(gen_alg.GeneticAlgorithm):
 
     def _fitness(self, individual):
         '''Determine the fitness of an individual.'''
+
+        # Form hidden layers array:
+        num_hidden_layers = individual.pop('num_hidden_layers')
+        num_nodes = individual.pop('num_nodes')
+        individual['hidden_layers'] = [num_nodes] * num_hidden_layers
+
         cls = self.__classifier.classify(**individual)
+
+        # Reform individual dict:
+        individual.pop('hidden_layers')
+        individual['num_hidden_layers'] = num_hidden_layers
+        individual['num_nodes'] = num_nodes
 
         if self._verbose:
             print str(cls[4]) + '\t' + str(individual)
@@ -46,7 +57,10 @@ def main(argv):
 
     print hammings
 
-    args = {'hidden_layers': range(0, 100),
+    max_hidden_layers = 3
+
+    args = {'num_hidden_layers': range(1, max_hidden_layers),
+            'num_nodes': range(1, 100),
             'learning_rate': [i * 0.001 for i in range(1, 10)],
             'momentum': [i * 0.1 for i in range(1, 10)],
             'patience': range(1, 10),
