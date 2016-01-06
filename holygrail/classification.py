@@ -40,23 +40,39 @@ class Classifier(object):
         self.__x_data_test = x_data[ind:]
         self.__y_data_test = y_data[ind:]
 
-    def classify(self, hidden_layers=None, learning_rate=0.01, momentum=0.5,
-                 patience=5, min_improvement=0.005, validate_every=1,
-                 batch_size=5, hidden_dropout=0.0, input_dropout=0.0):
+    def classify(self, hidden_layers=None, input_noise=0.0, hidden_noise=0.0,
+                 learning_rate=0.01, momentum=0.5, patience=5,
+                 min_improvement=0.005, validate_every=1, batch_size=5,
+                 hidden_dropout=0.0, input_dropout=0.0,
+                 aa_props_filter=(2**holygrail.NUM_AA_PROPS - 1)):
         '''Classification of peptides, specified by structure patterns as
         regexps.'''
 
+        x_data_train = _filter_x_data(self.__x_data_train, aa_props_filter)
+        x_data_test = _filter_x_data(self.__x_data_test, aa_props_filter)
+
         # Perform classification:
-        classifier = synbiochem.ann.Classifier(self.__x_data_train,
+        classifier = synbiochem.ann.Classifier(x_data_train,
                                                self.__y_data_train)
-        classifier.train(hidden_layers=hidden_layers,
+        classifier.train(hidden_layers=hidden_layers, input_noise=input_noise,
+                         hidden_noise=hidden_noise,
                          learning_rate=learning_rate, momentum=momentum,
                          patience=patience, min_improvement=min_improvement,
                          validate_every=validate_every, batch_size=batch_size,
                          hidden_dropout=hidden_dropout,
                          input_dropout=input_dropout)
 
-        return classifier.classify(self.__x_data_test, self.__y_data_test)
+        return classifier.classify(x_data_test, self.__y_data_test)
+
+
+def _filter_x_data(x_data, aa_props_filter):
+    '''Filter x_data (effectively select amino acid parameters).'''
+    expand_binary = list(reversed([int(d)
+                                   for d in str(bin(aa_props_filter))[2:]]))
+    flt = [i for i, x in enumerate(expand_binary) if x == 1]
+    return [[v for i, v in enumerate(values)
+             if i % holygrail.NUM_AA_PROPS in flt]
+            for values in x_data]
 
 
 def main(argv):

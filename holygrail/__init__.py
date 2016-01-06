@@ -45,6 +45,8 @@ AA_PROPS = {
     'V': [4.2, -0.2469, -3, 49.5, -69.3]
 }
 
+NUM_AA_PROPS = len(AA_PROPS['A'])
+
 
 def get_input_data(all_sequences, scale=(0.1, 0.9)):
     '''Returns input data for machine-learning problems.'''
@@ -63,7 +65,7 @@ def __scale(scale):
     '''Scale amino acid properties.'''
     scaled = collections.defaultdict(list)
 
-    for i in range(len(AA_PROPS['A'])):
+    for i in range(NUM_AA_PROPS):
         props = {key: value[i] for key, value in AA_PROPS.iteritems()}
         min_val, max_val = min(props.values()), max(props.values())
 

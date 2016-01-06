@@ -31,16 +31,13 @@ class ClassifierGeneticAlgorithm(gen_alg.GeneticAlgorithm):
         '''Determine the fitness of an individual.'''
 
         # Form hidden layers array:
-        num_hidden_layers = individual.pop('num_hidden_layers')
-        activ_func = individual.pop('activ_func')
-        num_nodes = individual.pop('num_nodes')
+        num_hidden_layers = individual.pop('num_hidden_layers', 1)
+        activ_func = individual.pop('activ_func', 'relu')
+        num_nodes = individual.pop('num_nodes', 100)
         individual['hidden_layers'] = [(num_nodes, activ_func)] * \
             num_hidden_layers
 
-        try:
-            cls = self.__classifier.classify(**individual)
-        except KeyError:
-            print activ_func
+        cls = self.__classifier.classify(**individual)
 
         # Reform individual dict:
         individual.pop('hidden_layers')
@@ -63,22 +60,24 @@ def main(argv):
 
     print hammings
 
-    max_hidden_layers = 3
-
-    args = {'num_hidden_layers': range(1, max_hidden_layers + 1),
+    args = {'aa_props_filter': range(1, (2**holygrail.NUM_AA_PROPS)),
+            'input_noise': [i * 0.1 for i in range(1, 10)],
+            'hidden_noise': [i * 0.1 for i in range(1, 10)],
+            'num_hidden_layers': range(1, 4),
             'activ_func': ['linear', 'sigmoid', 'logistic', 'tanh', 'softplus',
                            'softmax', 'relu', 'rect:min', 'rect:max',
                            'norm:mean', 'norm:max', 'norm:std', 'norm:z',
                            'prelu', 'lgrelu'],
             'num_nodes': range(1, 100),
-            'learning_rate': [i * 0.001 for i in range(1, 10)],
-            'momentum': [i * 0.1 for i in range(1, 10)],
-            'patience': range(1, 10),
-            'min_improvement': [i * 0.001 for i in range(1, 10)],
-            'validate_every': range(1, 10),
-            'batch_size': range(1, 10),
-            'hidden_dropout': [i * 0.1 for i in range(0, 10)],
-            'input_dropout': [i * 0.1 for i in range(0, 10)]}
+            # 'learning_rate': [i * 0.001 for i in range(1, 10)],
+            # 'momentum': [i * 0.1 for i in range(1, 10)],
+            # 'patience': range(1, 10),
+            # 'min_improvement': [i * 0.001 for i in range(1, 10)],
+            # 'validate_every': range(1, 10),
+            # 'batch_size': range(1, 10),
+            # 'hidden_dropout': [i * 0.1 for i in range(0, 10)],
+            # 'input_dropout': [i * 0.1 for i in range(0, 10)]
+            }
 
     classifier = ClassifierGeneticAlgorithm(pop_size=int(argv[1]),
                                             pdb_data=pdb_data,
