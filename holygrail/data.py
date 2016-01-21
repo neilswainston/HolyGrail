@@ -43,8 +43,14 @@ def sample_seqs(sample_size, struct_patts, min_hamming=3, local_only=False):
                     (the secondary structure) is occasionally and inexplicably
                     None.'''
 
-            _filter_hammings(matches, sample_size, seqs, struct_patt,
-                             min_hamming, hammings)
+            if min_hamming > 0:
+                _filter_hammings(matches, sample_size, seqs, struct_patt,
+                                 min_hamming, hammings)
+            else:
+                matches_required = sample_size - len(seqs[struct_patt])
+                seqs[struct_patt].extend(random.sample(matches,
+                                                       min(len(matches),
+                                                           matches_required)))
 
     return seqs, hammings
 
