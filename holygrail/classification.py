@@ -64,6 +64,10 @@ class Classifier(object):
 
         return classifier.classify(x_data_test, self.__y_data_test)
 
+    def get_y_data_test(self):
+        '''Returns the test output data.'''
+        return self.__y_data_test
+
 
 def _filter_x_data(x_data, aa_props_filter):
     '''Filter x_data (effectively select amino acid parameters).'''
@@ -85,6 +89,9 @@ def main(argv):
 
     classifier = Classifier(pdb_data, float(argv[2]))
     classification = classifier.classify(hidden_layers=[int(argv[3])])
+
+    for test, pred in zip(classifier.get_y_data_test(), classification[0]):
+        print '\t'.join([test, pred, str(test == pred)])
 
     for output in classification[1:]:
         print output
