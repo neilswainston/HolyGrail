@@ -60,21 +60,21 @@ def main(argv):
 
     print hammings
 
-    args = {'aa_props_filter': range(1, (2**holygrail.NUM_AA_PROPS)),
-            'input_noise': [i * 0.1 for i in range(0, 10)],
-            'hidden_noise': [i * 0.1 for i in range(0, 10)],
-            'num_hidden_layers': range(1, 4),
-            'num_nodes': range(1, 100),
-            'activ_func': ['relu', 'prelu', 'lgrelu'],
-            # 'learning_rate': [i * 0.001 for i in range(1, 10)],
-            # 'momentum': [i * 0.1 for i in range(1, 10)],
-            # 'patience': range(1, 10),
-            # 'min_improvement': [i * 0.001 for i in range(1, 10)],
-            # 'validate_every': range(1, 10),
-            # 'batch_size': range(1, 10),
-            # 'hidden_dropout': [i * 0.1 for i in range(0, 10)],
-            # 'input_dropout': [i * 0.1 for i in range(0, 10)]
-            }
+    args = {  # 'aa_props_filter': range(1, (2**holygrail.NUM_AA_PROPS)),
+        # 'input_noise': [i * 0.1 for i in range(0, 10)],
+        # 'hidden_noise': [i * 0.1 for i in range(0, 10)],
+        'num_hidden_layers': range(1, 4),
+        'num_nodes': range(100, 1000, 100),
+        'activ_func': ['relu', 'prelu', 'lgrelu'],
+        'learning_rate': range(0.01, 0.25, 0.01),
+        'momentum': range(0, 1, 0.1),
+        # 'patience': range(1, 10),
+        # 'min_improvement': [i * 0.001 for i in range(1, 10)],
+        # 'validate_every': range(1, 10),
+        'batch_size': range(10, 500, 10),
+        # 'hidden_dropout': [i * 0.1 for i in range(0, 10)],
+        # 'input_dropout': [i * 0.1 for i in range(0, 10)]
+    }
 
     classifier = ClassifierGeneticAlgorithm(pop_size=int(argv[1]),
                                             pdb_data=pdb_data,

@@ -41,8 +41,8 @@ class Classifier(object):
         self.__y_data_test = y_data[ind:]
 
     def classify(self, hidden_layers=None, input_noise=0.0, hidden_noise=0.0,
-                 learning_rate=0.01, momentum=0.5, patience=5,
-                 min_improvement=0.005, validate_every=1, batch_size=5,
+                 learning_rate=0.01, momentum=0.7, patience=5,
+                 min_improvement=0.005, validate_every=1, batch_size=256,
                  hidden_dropout=0.0, input_dropout=0.0,
                  aa_props_filter=(2**holygrail.NUM_AA_PROPS - 1)):
         '''Classification of peptides, specified by structure patterns as
