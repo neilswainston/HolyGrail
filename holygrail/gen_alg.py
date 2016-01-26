@@ -68,9 +68,9 @@ def main(argv):
         'activ_func': ['relu', 'prelu', 'lgrelu'],
         'learning_rate': [x / 1000.0 for x in range(1, 100)],
         'momentum': [x / 10.0 for x in range(0, 10)],
-        'patience': range(1, 100),
-        'min_improvement': [i / 1000.0 for i in range(1, 100)],
-        'validate_every': range(1, 25),
+        'patience': range(1, 10),
+        # 'min_improvement': [i / 1000.0 for i in range(1, 100)],
+        # 'validate_every': range(1, 25),
         'batch_size': range(10, 500, 10),
         # 'hidden_dropout': [i * 0.1 for i in range(0, 10)],
         # 'input_dropout': [i * 0.1 for i in range(0, 10)]
