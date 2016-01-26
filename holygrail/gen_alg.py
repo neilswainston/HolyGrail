@@ -61,16 +61,16 @@ def main(argv):
     print hammings
 
     args = {  # 'aa_props_filter': range(1, (2**holygrail.NUM_AA_PROPS)),
-        # 'input_noise': [i * 0.1 for i in range(0, 10)],
-        # 'hidden_noise': [i * 0.1 for i in range(0, 10)],
+        'input_noise': [i / 10.0 for i in range(0, 10)],
+        'hidden_noise': [i / 10.0 for i in range(0, 10)],
         'num_hidden_layers': range(1, 4),
-        'num_nodes': range(100, 1000, 100),
+        'num_nodes': range(100, 5000, 100),
         'activ_func': ['relu', 'prelu', 'lgrelu'],
-        'learning_rate': [x / 100.0 for x in range(1, 25)],
+        'learning_rate': [x / 1000.0 for x in range(1, 100)],
         'momentum': [x / 10.0 for x in range(0, 10)],
-        # 'patience': range(1, 10),
-        # 'min_improvement': [i * 0.001 for i in range(1, 10)],
-        # 'validate_every': range(1, 10),
+        'patience': range(1, 100),
+        'min_improvement': [i / 1000.0 for i in range(1, 100)],
+        'validate_every': range(1, 25),
         'batch_size': range(10, 500, 10),
         # 'hidden_dropout': [i * 0.1 for i in range(0, 10)],
         # 'input_dropout': [i * 0.1 for i in range(0, 10)]
