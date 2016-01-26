@@ -55,8 +55,8 @@ def main(argv):
     '''main method.'''
 
     # Get random peptides that match structure patterns from PDB:
-    pdb_data, hammings = holygrail.data.sample_seqs(int(argv[2]),
-                                                    argv[7:])
+    pdb_data, hammings = holygrail.data.sample_seqs(int(argv[2]), argv[8:],
+                                                    int(argv[3]))
 
     print hammings
 
@@ -66,8 +66,8 @@ def main(argv):
         'num_hidden_layers': range(1, 4),
         'num_nodes': range(100, 1000, 100),
         'activ_func': ['relu', 'prelu', 'lgrelu'],
-        'learning_rate': range(0.01, 0.25, 0.01),
-        'momentum': range(0, 1, 0.1),
+        'learning_rate': [x / 100.0 for x in range(1, 25)],
+        'momentum': [x / 10.0 for x in range(0, 10)],
         # 'patience': range(1, 10),
         # 'min_improvement': [i * 0.001 for i in range(1, 10)],
         # 'validate_every': range(1, 10),
@@ -78,11 +78,11 @@ def main(argv):
 
     classifier = ClassifierGeneticAlgorithm(pop_size=int(argv[1]),
                                             pdb_data=pdb_data,
-                                            split=float(argv[3]),
+                                            split=float(argv[4]),
                                             args=args,
-                                            retain=float(argv[4]),
-                                            random_select=float(argv[5]),
-                                            mutate=float(argv[6]),
+                                            retain=float(argv[5]),
+                                            random_select=float(argv[6]),
+                                            mutate=float(argv[7]),
                                             verbose=True)
 
     classifier.run()
