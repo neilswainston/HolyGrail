@@ -33,7 +33,7 @@ class ClassifierGeneticAlgorithm(gen_alg.GeneticAlgorithm):
         # Form hidden layers array:
         num_hidden_layers = individual.pop('num_hidden_layers', 1)
         activ_func = individual.pop('activ_func', 'relu')
-        num_nodes = individual.pop('num_nodes', 100)
+        num_nodes = individual.pop('num_nodes', 128)
         individual['hidden_layers'] = [(num_nodes, activ_func)] * \
             num_hidden_layers
 
@@ -46,7 +46,9 @@ class ClassifierGeneticAlgorithm(gen_alg.GeneticAlgorithm):
         individual['num_nodes'] = num_nodes
 
         if self._verbose:
+            print str(cls[3])
             print str(cls[4]) + '\t' + str(individual)
+            print
 
         return 1 - cls[4]
 
@@ -61,17 +63,17 @@ def main(argv):
     print hammings
 
     args = {  # 'aa_props_filter': range(1, (2**holygrail.NUM_AA_PROPS)),
-        'input_noise': [i / 10.0 for i in range(0, 10)],
-        'hidden_noise': [i / 10.0 for i in range(0, 10)],
-        'num_hidden_layers': range(1, 4),
-        'num_nodes': range(100, 5000, 100),
+        # 'input_noise': [i / 10.0 for i in range(0, 10)],
+        # 'hidden_noise': [i / 10.0 for i in range(0, 10)],
+        # 'num_hidden_layers': range(1, 4),
+        # 'num_nodes': range(100, 5000, 100),
         'activ_func': ['relu', 'prelu', 'lgrelu'],
-        'learning_rate': [x / 1000.0 for x in range(1, 100)],
+        'learning_rate': [x / 10000.0 for x in range(1, 100)],
         'momentum': [x / 10.0 for x in range(0, 10)],
         'patience': range(1, 10),
-        # 'min_improvement': [i / 1000.0 for i in range(1, 100)],
+        'min_improvement': [i / 1000.0 for i in range(1, 100)],
         # 'validate_every': range(1, 25),
-        'batch_size': range(10, 500, 10),
+        # 'batch_size': range(10, 50, 10),
         # 'hidden_dropout': [i * 0.1 for i in range(0, 10)],
         # 'input_dropout': [i * 0.1 for i in range(0, 10)]
     }
