@@ -10,6 +10,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 # pylint: disable=too-few-public-methods
 import sys
 
+from synbiochem.utils import sequence_utils
 import holygrail.data
 import synbiochem.ann
 
@@ -23,9 +24,9 @@ class Classifier(object):
         # climate.enable_default_logging()
 
         # Convert peptides to inputs, based on amino acid properties:
-        x_data = holygrail.get_input_data([i[0] for v in pdb_data.values()
-                                           for i in v],
-                                          scale=scale)
+        x_data = sequence_utils.get_aa_props([i[0] for v in pdb_data.values()
+                                              for i in v],
+                                             scale=scale)
 
         # Convert classes to outputs (these are based on structure patterns):
         y_data = [i for k, v in pdb_data.iteritems() for i in [k] * len(v)]
@@ -56,7 +57,7 @@ class Classifier(object):
                  weight_l1=0.0,
                  weight_l2=0.0,
                  algo='rmsprop',
-                 aa_props_filter=(2**holygrail.NUM_AA_PROPS - 1)):
+                 aa_props_filter=(2**sequence_utils.NUM_AA_PROPS - 1)):
         '''Classification of peptides, specified by structure patterns as
         regexps.'''
 
@@ -95,7 +96,7 @@ def _filter_x_data(x_data, aa_props_filter):
                                    for d in str(bin(aa_props_filter))[2:]]))
     flt = [i for i, x in enumerate(expand_binary) if x == 1]
     return [[v for i, v in enumerate(values)
-             if i % holygrail.NUM_AA_PROPS in flt]
+             if i % sequence_utils.NUM_AA_PROPS in flt]
             for values in x_data]
 
 
