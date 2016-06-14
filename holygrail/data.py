@@ -7,50 +7,32 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 
 @author:  neilswainston
 '''
+# pylint: disable=too-many-arguments
 import random
-import sys
-
-import regex
 
 import synbiochem.utils.sequence_utils as seq_utils
 import synbiochem.utils.structure_utils as struct_utils
 
 
-def sample_seqs(sample_size, struct_patts, min_hamming=3, local_only=False):
+def sample_seqs(sample_size, struct_sets, length, min_hamming=3):
     '''Sample sequence and structure data.'''
     seqs = {}
     hammings = {}
 
-    for struct_patt in struct_patts:
-        seqs[struct_patt] = []
+    for struct_set in struct_sets:
+        seqs[struct_set] = []
 
-        while len(seqs[struct_patt]) < sample_size:
-            matches = []
-            pdb_ids = struct_utils.get_pdb_ids(
-                sample_size, local_only=local_only)
-            seq_struct = struct_utils.get_seq_struct(pdb_ids)
-
-            for pdb_ids, seq_struct in seq_struct.iteritems():
-                try:
-                    for match in regex.finditer(struct_patt, seq_struct[1],
-                                                overlapped=True):
-                        matches.append([seq_struct[0][slice(*(match.span()))],
-                                        seq_struct[1][slice(*(match.span()))],
-                                        pdb_ids,
-                                        match.span()])
-                except TypeError:
-                    '''Take no action, but accept that seq_struct[1]
-                    (the secondary structure) is occasionally and inexplicably
-                    None.'''
+        while len(seqs[struct_set]) < sample_size:
+            matches_required = sample_size - len(seqs[struct_set])
+            matches = random.sample(struct_utils.get_pep_structs(struct_set,
+                                                                 length),
+                                    matches_required)
 
             if min_hamming > 0:
-                _filter_hammings(matches, sample_size, seqs, struct_patt,
+                _filter_hammings(matches, sample_size, seqs, struct_set,
                                  min_hamming, hammings)
             else:
-                matches_required = sample_size - len(seqs[struct_patt])
-                seqs[struct_patt].extend(random.sample(matches,
-                                                       min(len(matches),
-                                                           matches_required)))
+                seqs[struct_set] = matches
 
     return seqs, hammings
 
@@ -64,7 +46,7 @@ def _filter_hammings(matches, sample_size, seqs, struct_patt, min_hamming,
         curr_hamms = []
         for vals in seqs.values():
             for seq in vals:
-                hamming = seq_utils.get_hamming(seq[0], match[0])
+                hamming = seq_utils.get_hamming(seq, match)
                 if hamming < min_hamming:
                     add = False
                     break
@@ -79,23 +61,3 @@ def _filter_hammings(matches, sample_size, seqs, struct_patt, min_hamming,
                     hammings[hamming] = 0
 
                 hammings[hamming] += 1
-
-
-def main(argv):
-    '''main method.'''
-    seqs, hammings = sample_seqs(int(argv[1]),
-                                 argv[4:],
-                                 min_hamming=int(argv[2]))
-
-    print 'Hamming distances: ' + str(hammings)
-    print 'Total: ' + \
-        str(sum([v for v in hammings.values()]))
-
-    with open(argv[3], 'w') as outfile:
-        for struct_patt, values in seqs.iteritems():
-            for seq in values:
-                outfile.write('\t'.join([struct_patt] +
-                                        [str(v) for v in seq]) + '\n')
-
-if __name__ == '__main__':
-    main(sys.argv)

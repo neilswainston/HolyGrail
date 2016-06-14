@@ -104,12 +104,13 @@ def main(argv):
     '''main method.'''
     # Get random peptides that match structure patterns from PDB:
     pdb_data, hammings = holygrail.data.sample_seqs(int(argv[1]),
-                                                    argv[4:])
+                                                    argv[5:],
+                                                    int(argv[2]))
 
     print hammings
 
-    classifier = Classifier(pdb_data, float(argv[2]))
-    classification = classifier.classify(hidden_layers=[int(argv[3])])
+    classifier = Classifier(pdb_data, float(argv[3]))
+    classification = classifier.classify(hidden_layers=[int(argv[4])])
 
     for test, pred in zip(classifier.get_y_data_test(), classification[0]):
         print '\t'.join([test, pred, str(test == pred)])
