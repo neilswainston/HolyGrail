@@ -43,21 +43,9 @@ class Classifier(object):
 
     def classify(self,
                  hidden_layers=None,
-                 input_noise=0.0,
-                 hidden_noise=0.0,
-                 learning_rate=0.01,
-                 momentum=0.7,
-                 patience=5,
-                 min_improvement=0.005,
-                 validate_every=1,
-                 batch_size=256,
-                 hidden_dropout=0.0,
-                 input_dropout=0.0,
-                 max_updates=256,
-                 weight_l1=0.0,
-                 weight_l2=0.0,
-                 algo='rmsprop',
-                 aa_props_filter=(2**sequence_utils.NUM_AA_PROPS - 1)):
+                 hyperparams=None,
+                 aa_props_filter=(2**sequence_utils.NUM_AA_PROPS - 1),
+                 split=0.75):
         '''Classification of peptides, specified by structure patterns as
         regexps.'''
 
@@ -67,21 +55,7 @@ class Classifier(object):
         # Perform classification:
         classifier = theanets_utils.Classifier(x_data_train,
                                                self.__y_data_train)
-        classifier.train(hidden_layers=hidden_layers,
-                         input_noise=input_noise,
-                         hidden_noise=hidden_noise,
-                         learning_rate=learning_rate,
-                         momentum=momentum,
-                         patience=patience,
-                         min_improvement=min_improvement,
-                         validate_every=validate_every,
-                         batch_size=batch_size,
-                         hidden_dropout=hidden_dropout,
-                         input_dropout=input_dropout,
-                         max_updates=max_updates,
-                         weight_l1=weight_l1,
-                         weight_l2=weight_l2,
-                         algo=algo)
+        classifier.train(split, hidden_layers, hyperparams)
 
         return classifier.classify(x_data_test, self.__y_data_test)
 
