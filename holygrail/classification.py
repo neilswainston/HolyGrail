@@ -12,7 +12,7 @@ import sys
 
 from synbiochem.utils import sequence_utils
 import holygrail.data
-import synbiochem.ann
+import holygrail.theanets_utils as theanets_utils
 
 
 # import climate
@@ -32,7 +32,7 @@ class Classifier(object):
         y_data = [i for k, v in pdb_data.iteritems() for i in [k] * len(v)]
 
         # Randomise input and output data order:
-        x_data, y_data = synbiochem.ann.randomise_order(x_data, y_data)
+        x_data, y_data = theanets_utils.randomise_order(x_data, y_data)
 
         # Split data into training and testing:
         ind = int(split * len(x_data))
@@ -65,7 +65,7 @@ class Classifier(object):
         x_data_test = _filter_x_data(self.__x_data_test, aa_props_filter)
 
         # Perform classification:
-        classifier = synbiochem.ann.Classifier(x_data_train,
+        classifier = theanets_utils.Classifier(x_data_train,
                                                self.__y_data_train)
         classifier.train(hidden_layers=hidden_layers,
                          input_noise=input_noise,
