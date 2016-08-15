@@ -8,17 +8,15 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 @author:  neilswainston
 '''
 import itertools
-import sys
 
 from sklearn.metrics import mean_squared_error
 import climate
 
+from holygrail import data, theanets_utils
 from synbiochem.utils import sequence_utils, structure_utils
-import holygrail
-import synbiochem.ann
 
 
-def regress(sample_size, struct_pattern, split, hidden_layers):
+def regress(sample_size, struct_sets, length, split, hidden_layers):
     '''Regression of phi/psi angles of peptides, specified by structure
     pattern as regexps.'''
     climate.enable_default_logging()
@@ -28,8 +26,7 @@ def regress(sample_size, struct_pattern, split, hidden_layers):
 
     while len(x_data) < sample_size:
         # Get random peptides that match structure patterns from PDB:
-        pdb_data, _ = holygrail.data.sample_seqs(sample_size, [struct_pattern],
-                                                 local_only=True)
+        pdb_data, _ = data.sample_seqs(sample_size, struct_sets, length)
 
         # Convert peptides to inputs, based on amino acid properties:
         curr_x_data = sequence_utils.get_aa_props([i[0]
@@ -50,7 +47,7 @@ def regress(sample_size, struct_pattern, split, hidden_layers):
                        len(sequence_utils.AA_PROPS['A'])])
 
     # Randomise input and output data order:
-    x_data, y_data = synbiochem.ann.randomise_order(x_data[:sample_size],
+    x_data, y_data = theanets_utils.randomise_order(x_data[:sample_size],
                                                     y_data[:sample_size])
 
     return _run_regressor(split, x_data, y_data, hidden_layers)
@@ -95,7 +92,7 @@ def _run_regressor(split, x_data, y_data, hidden_layers):
     ind = int(split * len(x_data))
 
     # Perform regression:
-    regressor = synbiochem.ann.Regressor(x_data[:ind], y_data[:ind])
+    regressor = theanets_utils.Regressor(x_data[:ind], y_data[:ind])
     regressor.train(hidden_layers=[hidden_layers])
     y_pred = regressor.predict(x_data[ind:])
 
@@ -105,15 +102,3 @@ def _run_regressor(split, x_data, y_data, hidden_layers):
     print [len(d) for d in y_pred]
 
     return mean_squared_error(y_data[ind:], y_pred)
-
-
-def main(argv):
-    '''main method.'''
-    print regress(int(argv[1]),
-                  argv[4],
-                  float(argv[2]),
-                  int(argv[3]))
-
-
-if __name__ == '__main__':
-    main(sys.argv)

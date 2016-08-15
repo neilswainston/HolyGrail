@@ -78,7 +78,7 @@ class TestRegressor(unittest.TestCase):
         y_train = [[y] for y in y_data[:ind]]
         regressor = theanets_utils.Regressor(x_data[:ind], y_train)
 
-        regressor.train(hidden_layers=[12])
+        regressor.train(hidden_layers=[1])
         y_pred = regressor.predict(x_data[ind:])
 
         self.assertTrue(numpy.sqrt(numpy.mean((y_data[ind:] - y_pred) ** 2)) <
