@@ -12,7 +12,7 @@ import sys
 
 from synbiochem.utils import sequence_utils
 import holygrail.data
-import holygrail.theanets_utils as theanets_utils
+import sbclearn.theanets.theanets_utils as theanets_utils
 
 
 # import climate

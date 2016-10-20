@@ -10,8 +10,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 # pylint: disable=too-few-public-methods
 import sys
 
-import holygrail.classification as classification
-import holygrail.data
+from holygrail import data, classification
 import synbiochem.optimisation.gen_alg as gen_alg
 
 
@@ -57,8 +56,8 @@ def main(argv):
     '''main method.'''
 
     # Get random peptides that match structure patterns from PDB:
-    pdb_data, hammings = holygrail.data.sample_seqs(int(argv[2]), argv[9:],
-                                                    int(argv[3]), int(argv[4]))
+    pdb_data, hammings = data.sample_seqs(int(argv[2]), argv[9:],
+                                          int(argv[3]), int(argv[4]))
 
     print hammings
 

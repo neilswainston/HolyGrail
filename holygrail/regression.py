@@ -10,10 +10,11 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 import itertools
 
 from sklearn.metrics import mean_squared_error
+from synbiochem.utils import sequence_utils, structure_utils
 import climate
 
-from holygrail import data, theanets_utils
-from synbiochem.utils import sequence_utils, structure_utils
+from holygrail import data
+import sbclearn.theanets.theanets_utils as theanets_utils
 
 
 def regress(sample_size, struct_sets, length, split, hidden_layers):
