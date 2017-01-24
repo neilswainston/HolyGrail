@@ -10,7 +10,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 import itertools
 
 from sklearn.metrics import mean_squared_error
-from synbiochem.utils import sequence_utils, structure_utils
+from synbiochem.utils import seq_utils, struct_utils
 import climate
 
 from holygrail import data
@@ -30,9 +30,9 @@ def regress(sample_size, struct_sets, length, split, hidden_layers):
         pdb_data, _ = data.sample_seqs(sample_size, struct_sets, length)
 
         # Convert peptides to inputs, based on amino acid properties:
-        curr_x_data = sequence_utils.get_aa_props([i[0]
-                                                   for v in pdb_data.values()
-                                                   for i in v])
+        curr_x_data = seq_utils.get_aa_props([i[0]
+                                              for v in pdb_data.values()
+                                              for i in v])
 
         # Get torsion angles as outputs:
         curr_y_data = [_get_phi_psi_data(v[2][0], v[2][1], v[3])
@@ -41,23 +41,23 @@ def regress(sample_size, struct_sets, length, split, hidden_layers):
 
         x_data.extend([d for i, d in enumerate(curr_x_data)
                        if len(curr_y_data[i]) / 2 == len(curr_y_data[i]) /
-                       len(sequence_utils.AA_PROPS['A'])])
+                       len(seq_utils.AA_PROPS['A'])])
 
         y_data.extend([d for i, d in enumerate(curr_y_data)
                        if len(curr_y_data[i]) / 2 == len(curr_y_data[i]) /
-                       len(sequence_utils.AA_PROPS['A'])])
+                       len(seq_utils.AA_PROPS['A'])])
 
     # Randomise input and output data order:
-    x_data, y_data = theanets_utils.randomise_order(x_data[:sample_size],
-                                                    y_data[:sample_size])
+    x_data, y_data = theanets_utils.randomise_order([x_data[:sample_size],
+                                                     y_data[:sample_size]])
 
     return _run_regressor(split, x_data, y_data, hidden_layers)
 
 
 def _get_proximity_data(pdb_id):
     '''Gets proximity_data for deep learning.'''
-    all_sequences = structure_utils.get_sequences(pdb_id)
-    all_proximity_data = structure_utils.calc_proximities(pdb_id)
+    all_sequences = struct_utils.get_sequences(pdb_id)
+    all_proximity_data = struct_utils.calc_proximities(pdb_id)
 
     # Ensure data consistency in terms of data lengths:
     assert len(all_sequences) == len(all_proximity_data)
@@ -72,7 +72,7 @@ def _get_proximity_data(pdb_id):
 
 def _get_phi_psi_data(pdb_id, chain, subrange):
     '''Gets input/output for deep learning.'''
-    all_phi_psi_data = structure_utils.get_phi_psi_data(pdb_id, chain)
+    all_phi_psi_data = struct_utils.get_phi_psi_data(pdb_id, chain)
 
     phi_psi_output = [list(itertools.chain.from_iterable(lst))
                       for lst in all_phi_psi_data]
