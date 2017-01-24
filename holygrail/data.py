@@ -10,8 +10,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 # pylint: disable=too-many-arguments
 import random
 
-import synbiochem.utils.sequence_utils as seq_utils
-import synbiochem.utils.structure_utils as struct_utils
+from synbiochem.utils import seq_utils, struct_utils
 
 
 def sample_seqs(sample_size, struct_sets, length, min_hamming=3):

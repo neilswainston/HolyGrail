@@ -8,6 +8,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 @author:  neilswainston
 '''
 # pylint: disable=too-few-public-methods
+# pylint: disable=too-many-arguments
 import sys
 
 from holygrail import data, classification

@@ -10,7 +10,7 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 # pylint: disable=too-few-public-methods
 import sys
 
-from synbiochem.utils import sequence_utils
+from synbiochem.utils import seq_utils
 import holygrail.data
 import sbclearn.theanets.theanets_utils as theanets_utils
 
@@ -24,15 +24,15 @@ class Classifier(object):
         # climate.enable_default_logging()
 
         # Convert peptides to inputs, based on amino acid properties:
-        x_data = sequence_utils.get_aa_props([i[0] for v in pdb_data.values()
-                                              for i in v],
-                                             scale=scale)
+        x_data = seq_utils.get_aa_props([i[0] for v in pdb_data.values()
+                                         for i in v],
+                                        scale=scale)
 
         # Convert classes to outputs (these are based on structure patterns):
         y_data = [i for k, v in pdb_data.iteritems() for i in [k] * len(v)]
 
         # Randomise input and output data order:
-        x_data, y_data = theanets_utils.randomise_order(x_data, y_data)
+        x_data, y_data = theanets_utils.randomise_order([x_data, y_data])
 
         # Split data into training and testing:
         ind = int(split * len(x_data))
@@ -44,7 +44,7 @@ class Classifier(object):
     def classify(self,
                  hidden_layers=None,
                  hyperparams=None,
-                 aa_props_filter=(2**sequence_utils.NUM_AA_PROPS - 1),
+                 aa_props_filter=(2**seq_utils.NUM_AA_PROPS - 1),
                  split=0.75):
         '''Classification of peptides, specified by structure patterns as
         regexps.'''
@@ -70,7 +70,7 @@ def _filter_x_data(x_data, aa_props_filter):
                                    for d in str(bin(aa_props_filter))[2:]]))
     flt = [i for i, x in enumerate(expand_binary) if x == 1]
     return [[v for i, v in enumerate(values)
-             if i % sequence_utils.NUM_AA_PROPS in flt]
+             if i % seq_utils.NUM_AA_PROPS in flt]
             for values in x_data]
 
 
