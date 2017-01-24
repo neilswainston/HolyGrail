@@ -11,21 +11,21 @@ To view a copy of this license, visit <http://opensource.org/licenses/MIT/>.
 # pylint: disable=too-many-arguments
 import sys
 
-from holygrail import data, classification
+from holygrail import classification, pdb_data
 import synbiochem.optimisation.gen_alg as gen_alg
 
 
 class ClassifierGeneticAlgorithm(gen_alg.GeneticAlgorithm):
     '''Class to optimise parameters for Classifier using a GA.'''
 
-    def __init__(self, pop_size, pdb_data, split, args,
+    def __init__(self, pop_size, data, split, args,
                  retain=0.2, random_select=0.05, mutate=0.01, verbose=False):
         '''Constructor.'''
         super(ClassifierGeneticAlgorithm, self).__init__(pop_size, args,
                                                          retain, random_select,
                                                          mutate, verbose)
 
-        self.__classifier = classification.Classifier(pdb_data, split)
+        self.__classifier = classification.Classifier(data, split)
 
     def _fitness(self, individual):
         '''Determine the fitness of an individual.'''
@@ -57,10 +57,8 @@ def main(argv):
     '''main method.'''
 
     # Get random peptides that match structure patterns from PDB:
-    pdb_data, hammings = data.sample_seqs(int(argv[2]), argv[9:],
-                                          int(argv[3]), int(argv[4]))
-
-    print hammings
+    data, _ = pdb_data.sample_seqs(int(argv[2]), argv[9:],
+                                   int(argv[3]), int(argv[4]))
 
     args = {  # 'aa_props_filter': range(1, (2**holygrail.NUM_AA_PROPS)),
         # 'input_noise': [i / 10.0 for i in range(0, 10)],
@@ -78,16 +76,16 @@ def main(argv):
         # 'input_dropout': [i * 0.1 for i in range(0, 10)]
     }
 
-    classifier = ClassifierGeneticAlgorithm(pop_size=int(argv[1]),
-                                            pdb_data=pdb_data,
-                                            split=float(argv[5]),
-                                            args=args,
-                                            retain=float(argv[6]),
-                                            random_select=float(argv[7]),
-                                            mutate=float(argv[8]),
-                                            verbose=True)
+    cls_gen_alg = ClassifierGeneticAlgorithm(pop_size=int(argv[1]),
+                                             data=data,
+                                             split=float(argv[5]),
+                                             args=args,
+                                             retain=float(argv[6]),
+                                             random_select=float(argv[7]),
+                                             mutate=float(argv[8]),
+                                             verbose=True)
 
-    classifier.run()
+    cls_gen_alg.run()
 
 
 if __name__ == '__main__':
